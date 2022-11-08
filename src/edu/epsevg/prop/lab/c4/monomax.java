@@ -9,19 +9,36 @@ package edu.epsevg.prop.lab.c4;
  *
  * @author Walter y Miquel
  */
-public class monomax implements Jugador, IAuto{
+public class Monomax implements Jugador, IAuto{
     private String nom;
-    
-    public monomax(){
-        nom = "MONOMAX";
+    private int color;
+    private int profundidad;
+
+    public Monomax(int profundidad){
+        this.nom = "MONOMAX";
+        this.profundidad = profundidad;
+        
     }
     
     public int moviment(Tauler t, int color){
-        int col = (int)(t.getMida() * Math.random());
-        while (!t.movpossible(col)) {
-        col = (int)(t.getMida() * Math.random());
-        }
+        this.color = color;
+        int depth = profundidad;
+
+        int col = columna(t, depth);
+
         return col;
+    }
+
+    public int heuristica(Tauler t){
+        return valor
+    }
+
+    public int minimax(Tauler t, int profundidad, int alfa, int beta, boolean isMax, int color){
+        return resultado
+    }
+
+    public int columna(Tauler t, int profundidad){
+        return columna
     }
     
     public String nom(){
