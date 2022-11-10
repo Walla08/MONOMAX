@@ -30,15 +30,18 @@ public class Monomax implements Jugador, IAuto{
     }
 
     public int heuristica(Tauler t){
-        return valor
+        int valor = 0;
+        return valor;
     }
 
     public int minimax(Tauler t, int profundidad, int alfa, int beta, boolean isMax, int color){
-        return resultado
+        int resultado = 0;
+        return resultado;
     }
 
     public int columna(Tauler t, int profundidad){
-        return columna
+        int columna = 0;
+        return columna;
     }
     
     public String nom(){
