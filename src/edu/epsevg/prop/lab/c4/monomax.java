@@ -15,10 +15,12 @@ public class Monomax implements Jugador, IAuto {
     private int color;
     private int profundidad;
 
-    // Variable que emmagatzema la màxima puntuació. (mas infinito)
+    // Variable que almacena la mejor puntuacion posible para el movimiento. (mas
+    // infinito)
     private static final int GANADOR = 999999;
 
-    // Variable que emmagatzema la mínima puntuació. (menos infinito)
+    // Variable que almacena la peor puntuacion posible para el movimiento. (menos
+    // infinito)
     private static final int PERDEDOR = -999999;
 
     // Cantidad de veces que se calcula la heurisitca, se reincia cada ronda
@@ -32,6 +34,7 @@ public class Monomax implements Jugador, IAuto {
         this.nom = "MONOMAX";
         this.profundidad = profundidad;
         this.contador = 0;
+        this.rondas = 0;
     }
 
     public int moviment(Tauler t, int color) {
@@ -84,8 +87,8 @@ public class Monomax implements Jugador, IAuto {
         // ejecucion
         long Nanosegons = Final_Cronometre - Inici_Cronometre;
 
-        System.out.println("S'han explorat " + contador + " casos en " + Nanosegons
-                + " ns, millor heurística trobada: " + max + ".\n");
+        System.out.println("S'han explorat " + contador + " casos en " + (double) Nanosegons / 1_000_000_000
+                + " s, millor heurística trobada: " + max + ".\n");
 
         // Devolvemos la mejor columna a tirar
         return millormov;
@@ -95,9 +98,13 @@ public class Monomax implements Jugador, IAuto {
         int puntuacio_final;
         int verticales = 0;
         int horitzontals = 0;
-        int diagonal1 = 0;
-        int diagonal2 = 0;
+        int diagonal1 = 0; // Diagonal superior
+        int diagonal2 = 0; // Diagonal inferior
 
+        // Para todas las columnas comprueba la puntuacion vertical
+        // Si el jugador pierde, devuelve PERDEDOR, si gana devuelve GANADOR
+        // Si ni gana ni pierde devuelve la acumulacion de la puntuacion vertical de
+        // todas las columnas
         for (int fila = 0; fila < t.getMida() - 3; fila++) {
             for (int columna = 0; columna < t.getMida(); columna++) {
                 int puntuacio_posicio = bendiciones(t, fila, columna, 1, 0, color);
@@ -109,6 +116,10 @@ public class Monomax implements Jugador, IAuto {
             }
         }
 
+        // Para todas las columnas comprueba la puntuacion horizontal
+        // Si el jugador pierde, devuelve PERDEDOR, si gana devuelve GANADOR
+        // Si ni gana ni pierde devuelve la acumulacion de la puntuacion horizontal de
+        // todas las columnas
         for (int fila = 0; fila < t.getMida(); fila++) {
             for (int columna = 0; columna < t.getMida() - 3; columna++) {
                 int puntuacio_posicio = bendiciones(t, fila, columna, 0, 1, color);
@@ -120,7 +131,30 @@ public class Monomax implements Jugador, IAuto {
             }
         }
 
-        puntuacio_final = horitzontals + verticales + diagonal1 + diagonal2;
+        for (int fila = 0; fila < t.getMida() - 3; fila++) {
+            for (int columna = 0; columna < t.getMida() - 3; columna++) {
+                int puntuacio_posicio = bendiciones(t, fila, columna, 1, 1, color);
+                if (puntuacio_posicio == GANADOR)
+                    return GANADOR;
+                if (puntuacio_posicio == PERDEDOR)
+                    return PERDEDOR;
+                diagonal1 += puntuacio_posicio;
+            }
+        }
+
+        for (int fila = 3; fila < t.getMida(); fila++) {
+            for (int columna = 0; columna <= t.getMida() - 4; columna++) {
+                int puntuacio_posicio = bendiciones(t, fila, columna, -1, +1, color);
+                if (puntuacio_posicio == GANADOR)
+                    return GANADOR;
+                if (puntuacio_posicio == PERDEDOR)
+                    return PERDEDOR;
+                diagonal2 += puntuacio_posicio;
+            }
+
+        }
+
+        puntuacio_final = horitzontals + verticales; // + diagonal1 + diagonal2;
         return puntuacio_final;
     }
 
@@ -158,8 +192,8 @@ public class Monomax implements Jugador, IAuto {
                 // Sumamos 1 a l numero de casos explorados
                 contador++;
 
-                if (esBendicion) { // max
-                    // Realitzem el moviment amb el color d'Artemis, ja que estem a la capa Max.
+                if (esBendicion) {
+                    // Realizamos el movimiento seleccionado con el color del jugador.
                     tauler_aux.afegeix(col, color);
 
                     if (tauler_aux.solucio(col, color)) {
@@ -200,40 +234,42 @@ public class Monomax implements Jugador, IAuto {
 
     }
 
-    // Cuenta cuantas hay conectadas
+    // Cuenta cuantas hay conectadas del jugador y del oponente
     public int bendiciones(Tauler tauler, int fila, int columna, int increment_fila, int increment_columna, int color) {
+        // definimos los colores, tanto el nuestro como el del otro jugador
         int color_oponent;
         if (color == 1) {
             color_oponent = -1;
         } else {
             color_oponent = 1;
         }
-
-        int connectades_oponent = 0;
-        int connectades = 0;
+        // Contadores para las cantidad de fichas que esten conectadas
+        // tanto para nosotros como para el oponente
+        int bendiciones_oponente = 0;
+        int bendiciones = 0;
 
         for (int i = 0; i < 4; i++) {
             if (tauler.getColor(fila, columna) == color_oponent) {
-                connectades_oponent++;
+                bendiciones_oponente++;
             }
 
             else if (tauler.getColor(fila, columna) == color) {
-                connectades++;
+                bendiciones++;
             }
             fila += increment_fila;
             columna += increment_columna;
         }
 
-        if (connectades_oponent == 4) {
+        if (bendiciones_oponente == 4) {
             return PERDEDOR;
         }
 
-        else if (connectades == 4) {
+        else if (bendiciones == 4) {
             return GANADOR;
         }
 
         else {
-            return connectades;
+            return bendiciones;
         }
     }
 
