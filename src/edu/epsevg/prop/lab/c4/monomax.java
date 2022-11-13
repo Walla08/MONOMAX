@@ -21,24 +21,74 @@ public class Monomax implements Jugador, IAuto {
     // Variable que emmagatzema la mínima puntuació. (menos infinito)
     private static final int PERDEDOR = -999999;
 
-    /**
-     * Variable que emmagatzema la quantitat de casos (heuristiques) comptats,
-     * aquesta es reinicia cada ronda.
-     */
+    // Cantidad de veces que se calcula la heurisitca, se reincia cada ronda
     public int contador;
+
+    // Numero de rondas de la partida
+    public int rondas;
 
     // Constructor
     public Monomax(int profundidad) {
         this.nom = "MONOMAX";
         this.profundidad = profundidad;
-
+        this.contador = 0;
     }
 
     public int moviment(Tauler t, int color) {
-        this.color = color;
-        int depth = profundidad;
 
-        return 0;
+        // Obtenemos el instante de tiempo que nos encontramos en nanosegundos
+        long Inici_Cronometre = System.nanoTime();
+
+        // Sumamos 1 a la cantidad de rondas jugadas (las rondas comienzan en 1 no en 0)
+        rondas += 1;
+
+        // Establecemos el valor inicial como minimo para que cualquiera sea superior.
+        int max = Integer.MIN_VALUE;
+
+        // Establecemos el mejor movimiento como la columna 0 (default)
+        int millormov = 0;
+
+        System.out.println("\nRONDA " + rondas + "\n");
+
+        // Para cada columna del tablero
+        for (int col = 0; col < t.getMida(); col++) {
+
+            // Hacemos copia del tablero
+            Tauler tauler_aux = new Tauler(t);
+
+            // Si se puede realizar movimiento a la columna en la que estamos posicionados
+            if (tauler_aux.movpossible(col)) {
+
+                // Realizamos el movimiento
+                tauler_aux.afegeix(col, color);
+
+                // Establecemos actual como el valor heurisitico que tendra la linea del juego
+                // del tablero auxiliar
+
+                int actual = minimax(tauler_aux, color, (profundidad - 1), Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+
+                // Si el valor actual es superior al valor maximo, establecemos max como a
+                // actual y millormov como a valor de columna sobre la cual estamos
+
+                if (actual > max) {
+                    max = actual;
+                    millormov = col;
+                }
+            }
+        }
+
+        // Obtenemos el tiempo que estamos en nanosegundos
+        long Final_Cronometre = System.nanoTime();
+
+        // Calculamos el tiempo exacto restanto final meno inicial para ver el tiempo de
+        // ejecucion
+        long Nanosegons = Final_Cronometre - Inici_Cronometre;
+
+        System.out.println("S'han explorat " + contador + " casos en " + Nanosegons
+                + " ns, millor heurística trobada: " + max + ".\n");
+
+        // Devolvemos la mejor columna a tirar
+        return millormov;
     }
 
     public int heuristica(Tauler t, int color) {
@@ -74,8 +124,9 @@ public class Monomax implements Jugador, IAuto {
         return puntuacio_final;
     }
 
+    // True max, false min
     public int minimax(Tauler tauler_copia, int color, int profunditat, int alpha, int beta, boolean esBendicion) {
-        int color_oponent;
+        int color_oponent = color;
         int valor;
         // Si la profundidad ya ha llegado a su limite no habra mas movimientos
         // posibles, devolvemos la heurisica del tablero.
@@ -114,26 +165,26 @@ public class Monomax implements Jugador, IAuto {
                     if (tauler_aux.solucio(col, color)) {
                         return GANADOR;
                     }
-                    // Calculem l'heuristica que eventualment tindrà aquesta línea de joc. Si
-                    // aquesta és superior al valor actual, substituim valor per aquesta.
-                    valor = Math.max(valor, JugadaMin(tauler_aux, color, profunditat - 1, alpha, beta));
+                    // Calculamos heuristica. Si esta es supererior al valor actual, substituimos
+                    // valor por esta.
+                    valor = Math.max(valor, minimax(tauler_aux, color, profunditat - 1, alpha, beta, false));
 
-                    // Realitzem la poda alpha-beta
+                    // Poda alfa-beta
                     if (beta <= valor) {
                         return valor;
                     }
 
                     alpha = Math.max(valor, alpha);
                 } else { // min
-                    // Realitzem el moviment amb el color de l'oponent, ja que estem a la capa Mini.
+                    // Realizamos el movimiento con el color del oponente ya que estamos en la capa
+                    // Min
                     tauler_aux.afegeix(col, color_oponent);
 
                     if (tauler_aux.solucio(col, color_oponent)) {
                         return PERDEDOR;
                     }
-                    // Calculem l'heuristica que eventualment tindrà aquesta línea de joc. Si
-                    // aquesta és inferior al valor actual, substituim valor per aquesta.
-                    valor = Math.min(valor, JugadaMax(tauler_aux, color, profunditat - 1, alpha, beta));
+                    // Calculamos heuristica. Si esta es menor al valor actual substituimos por esta
+                    valor = Math.min(valor, minimax(tauler_aux, color, profunditat - 1, alpha, beta, true));
 
                     // Realitzem la poda alpha-beta
                     if (valor <= alpha) {
@@ -144,6 +195,7 @@ public class Monomax implements Jugador, IAuto {
                 }
             }
         }
+        // Devolvemos heuristica
         return valor;
 
     }
