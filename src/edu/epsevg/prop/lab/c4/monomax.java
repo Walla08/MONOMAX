@@ -75,41 +75,71 @@ public class Monomax implements Jugador, IAuto {
     }
 
     public int minimax(Tauler tauler_copia, int color, int profunditat, int alpha, int beta, boolean esBendicion) {
+        int color_oponent;
+        int valor;
+        // Si la profundidad ya ha llegado a su limite no habra mas movimientos
+        // posibles, devolvemos la heurisica del tablero.
         if (profunditat == 0 || tauler_copia.espotmoure() == false) {
             return heuristica(tauler_copia, color);
         }
-        int valor = Integer.MIN_VALUE;
+        // Inicializamos variables en funcion si es min o max
+        if (esBendicion) { // Max
+            // Establecemos el valor inicial como al minimo asi cualquier valor sera
+            // superior.
+            valor = Integer.MIN_VALUE;
+        } else { // Min
+            // Establecemos el valor inicial como al maximo asi cualquier valor sera
+            // inferior.
+            valor = Integer.MAX_VALUE;
+            // Obtenemos el color del oponente que es el contrario al nuestro.
+            if (color == 1) {
+                color_oponent = -1;
+            } else {
+                color_oponent = 1;
+            }
+        }
+        // Para cada columna del tablero
         for (int col = 0; col < tauler_copia.getMida(); col++) {
+            // Copia del tablero
             Tauler tauler_aux = new Tauler(tauler_copia);
+            // Si se puede realizar un movimiento en la columna que estamos posicionados
             if (tauler_aux.movpossible(col)) {
+                // Sumamos 1 a l numero de casos explorados
                 contador++;
-                tauler_aux.afegeix(col, color);
 
                 if (esBendicion) { // max
+                    // Realitzem el moviment amb el color d'Artemis, ja que estem a la capa Max.
+                    tauler_aux.afegeix(col, color);
+
                     if (tauler_aux.solucio(col, color)) {
                         return GANADOR;
                     }
+                    // Calculem l'heuristica que eventualment tindrà aquesta línea de joc. Si
+                    // aquesta és superior al valor actual, substituim valor per aquesta.
+                    valor = Math.max(valor, JugadaMin(tauler_aux, color, profunditat - 1, alpha, beta));
+
+                    // Realitzem la poda alpha-beta
                     if (beta <= valor) {
                         return valor;
                     }
-                    valor = Math.max(valor, minimax(tauler_aux, color, profunditat - 1, alpha, beta, !esBendicion));
-                    alpha = Math.max(valor, alpha);
 
+                    alpha = Math.max(valor, alpha);
                 } else { // min
-                    int color_oponent;
-                    if (color == 1) {
-                        color_oponent = -1;
-                    } else {
-                        color_oponent = 1;
-                    }
+                    // Realitzem el moviment amb el color de l'oponent, ja que estem a la capa Mini.
+                    tauler_aux.afegeix(col, color_oponent);
+
                     if (tauler_aux.solucio(col, color_oponent)) {
                         return PERDEDOR;
                     }
+                    // Calculem l'heuristica que eventualment tindrà aquesta línea de joc. Si
+                    // aquesta és inferior al valor actual, substituim valor per aquesta.
+                    valor = Math.min(valor, JugadaMax(tauler_aux, color, profunditat - 1, alpha, beta));
+
                     // Realitzem la poda alpha-beta
                     if (valor <= alpha) {
                         return valor;
                     }
-                    valor = Math.min(valor, minimax(tauler_aux, color, profunditat - 1, alpha, beta, !esBendicion));
+
                     beta = Math.min(valor, beta);
                 }
             }
