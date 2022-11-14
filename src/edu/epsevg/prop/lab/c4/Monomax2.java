@@ -9,7 +9,7 @@ package edu.epsevg.prop.lab.c4;
  *
  * @author Walter y Miquel
  */
-public class Monomax implements Jugador, IAuto {
+public class Monomax2 implements Jugador, IAuto {
 
     private String nom;
     private int color;
@@ -30,7 +30,7 @@ public class Monomax implements Jugador, IAuto {
     public int rondas;
 
     // Constructor
-    public Monomax(int profundidad) {
+    public Monomax2(int profundidad) {
         this.nom = "MONOMAX";
         this.profundidad = profundidad;
         this.contador = 0;
@@ -39,6 +39,8 @@ public class Monomax implements Jugador, IAuto {
 
     public int moviment(Tauler t, int color) {
 
+        // Establecemos los casos contados a 0
+        contador = 0;
         // Obtenemos el instante de tiempo que nos encontramos en nanosegundos
         long Inici_Cronometre = System.nanoTime();
 
@@ -87,8 +89,8 @@ public class Monomax implements Jugador, IAuto {
         // ejecucion
         long Nanosegons = Final_Cronometre - Inici_Cronometre;
 
-        System.out.println("S'han explorat " + contador + " casos en " + (double) Nanosegons / 1_000_000_000
-                + " s, millor heurística trobada: " + max + ".\n");
+        System.out.println("S'han explorat " + contador + " casos en " + (double) Nanosegons / 1_000_000
+                + " ms, millor heurística trobada: " + max + ".\n");
 
         // Devolvemos la mejor columna a tirar
         return millormov;
