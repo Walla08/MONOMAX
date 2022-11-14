@@ -69,12 +69,10 @@ public class Monomax2 implements Jugador, IAuto {
 
                 // Establecemos actual como el valor heurisitico que tendra la linea del juego
                 // del tablero auxiliar
-
                 int actual = minimax(tauler_aux, color, (profundidad - 1), Integer.MIN_VALUE, Integer.MAX_VALUE, false);
 
                 // Si el valor actual es superior al valor maximo, establecemos max como a
                 // actual y millormov como a valor de columna sobre la cual estamos
-
                 if (actual > max) {
                     max = actual;
                     millormov = col;
@@ -156,7 +154,7 @@ public class Monomax2 implements Jugador, IAuto {
 
         }
 
-        puntuacio_final = horitzontals + verticales; // + diagonal1 + diagonal2;
+        puntuacio_final = horitzontals + verticales + diagonal1 + diagonal2;
         return puntuacio_final;
     }
 
