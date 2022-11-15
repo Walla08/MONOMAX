@@ -107,12 +107,12 @@ public class Monomax2 implements Jugador, IAuto {
         // todas las columnas
         for (int fila = 0; fila < t.getMida() - 3; fila++) {
             for (int columna = 0; columna < t.getMida(); columna++) {
-                int puntuacio_posicio = bendiciones(t, fila, columna, 1, 0, color);
-                if (puntuacio_posicio == GANADOR)
+                int carles_puigdemont = bendiciones(t, fila, columna, 1, 0, color);
+                if (carles_puigdemont == GANADOR)
                     return GANADOR;
-                if (puntuacio_posicio == PERDEDOR)
+                if (carles_puigdemont == PERDEDOR)
                     return PERDEDOR;
-                verticales += puntuacio_posicio;
+                verticales += carles_puigdemont;
             }
         }
 
@@ -122,43 +122,44 @@ public class Monomax2 implements Jugador, IAuto {
         // todas las columnas
         for (int fila = 0; fila < t.getMida(); fila++) {
             for (int columna = 0; columna < t.getMida() - 3; columna++) {
-                int puntuacio_posicio = bendiciones(t, fila, columna, 0, 1, color);
-                if (puntuacio_posicio == GANADOR)
+                int carles_puigdemont = bendiciones(t, fila, columna, 0, 1, color);
+                if (carles_puigdemont == GANADOR)
                     return GANADOR;
-                if (puntuacio_posicio == PERDEDOR)
+                if (carles_puigdemont == PERDEDOR)
                     return PERDEDOR;
-                horitzontals += puntuacio_posicio;
+                horitzontals += carles_puigdemont;
             }
         }
 
-        for (int fila = 0; fila < t.getMida() - 3; fila++) {
-            for (int columna = 0; columna < t.getMida() - 3; columna++) {
-                int puntuacio_posicio = bendiciones(t, fila, columna, 1, 1, color);
-                if (puntuacio_posicio == GANADOR)
-                    return GANADOR;
-                if (puntuacio_posicio == PERDEDOR)
-                    return PERDEDOR;
-                diagonal1 += puntuacio_posicio;
-            }
-        }
-
-        for (int fila = 3; fila < t.getMida(); fila++) {
-            for (int columna = 0; columna <= t.getMida() - 4; columna++) {
-                int puntuacio_posicio = bendiciones(t, fila, columna, -1, +1, color);
-                if (puntuacio_posicio == GANADOR)
-                    return GANADOR;
-                if (puntuacio_posicio == PERDEDOR)
-                    return PERDEDOR;
-                diagonal2 += puntuacio_posicio;
-            }
-
-        }
-
-        // CAMBIAR KEKW
-        if(this.profundidad == 8){
+        // Por razones de alguna fuerza mayor (Ronald Koeman), al momento de comparar
+        // con profundidad 8 y utilizar diagonales
+        if (this.profundidad == 8) {
             puntuacio_final = horitzontals + verticales;
-        }
-        else{
+        } else {
+            // Si no es profundidad 8 que calcule tambien las diagonales
+            for (int fila = 0; fila < t.getMida() - 3; fila++) {
+                for (int columna = 0; columna < t.getMida() - 3; columna++) {
+                    int carles_puigdemont = bendiciones(t, fila, columna, 1, 1, color);
+                    if (carles_puigdemont == GANADOR)
+                        return GANADOR;
+                    if (carles_puigdemont == PERDEDOR)
+                        return PERDEDOR;
+                    diagonal1 += carles_puigdemont;
+                }
+            }
+
+            for (int fila = 3; fila < t.getMida(); fila++) {
+                for (int columna = 0; columna <= t.getMida() - 4; columna++) {
+                    int carles_puigdemont = bendiciones(t, fila, columna, -1, +1, color);
+                    if (carles_puigdemont == GANADOR)
+                        return GANADOR;
+                    if (carles_puigdemont == PERDEDOR)
+                        return PERDEDOR;
+                    diagonal2 += carles_puigdemont;
+                }
+
+            }
+
             puntuacio_final = horitzontals + verticales + diagonal1 + diagonal2;
         }
         return puntuacio_final;
