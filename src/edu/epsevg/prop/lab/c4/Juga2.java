@@ -95,10 +95,10 @@ public class Juga2 extends javax.swing.JFrame {
         //</editor-fold>
 
         // Definiu al vostre gust els jugadors a enfrontar.
-        Jugador p1 = new Profe(4,false);
+        Jugador p1 = new Profe(8,false  );
         //Jugador p1 = new Aleatori();
 
-        Jugador p2 = new Monomax2(4);
+        Jugador p2 = new Monomax2(8);
         //Jugador p2 = new Manual();
 
         boolean autoMode = true;

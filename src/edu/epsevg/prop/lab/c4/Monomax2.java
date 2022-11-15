@@ -95,7 +95,7 @@ public class Monomax2 implements Jugador, IAuto {
     }
 
     public int heuristica(Tauler t, int color) {
-        int puntuacio_final;
+        int puntuacio_final = 0;
         int verticales = 0;
         int horitzontals = 0;
         int diagonal1 = 0; // Diagonal superior
@@ -154,7 +154,13 @@ public class Monomax2 implements Jugador, IAuto {
 
         }
 
-        puntuacio_final = horitzontals + verticales + diagonal1 + diagonal2;
+        // CAMBIAR KEKW
+        if(this.profundidad == 8){
+            puntuacio_final = horitzontals + verticales;
+        }
+        else{
+            puntuacio_final = horitzontals + verticales + diagonal1 + diagonal2;
+        }
         return puntuacio_final;
     }
 
