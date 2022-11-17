@@ -36,7 +36,17 @@ public class Monomax2 implements Jugador, IAuto {
         this.contador = 0;
         this.rondas = 0;
     }
+    
+    /**
+     * Es la función principal para el movimiento de una ficha. 
+     * Se encarga de iniciar la función minimax para poder evaluar 
+     * el mejor movimiento posible para cada columna del tablero.
+     * 
+     * @param t
+     * @param color
+     * @return millormov
 
+     */
     public int moviment(Tauler t, int color) {
 
         // Establecemos los casos contados a 0
@@ -93,6 +103,15 @@ public class Monomax2 implements Jugador, IAuto {
         // Devolvemos la mejor columna a tirar
         return millormov;
     }
+    
+    /**
+     * Encargada de devolver el valor heurístico total que tiene cierto Tauler, 
+     * donde “color” hace referencia al color de ficha de nuestro jugador (Monomax 🐒 ). 
+     * Con este tablero y este color, podemos calcular cuál es el valor heurístico de la mesa.
+     * @param t
+     * @param color
+     * @return puntuacio_final
+     */
 
     public int heuristica(Tauler t, int color) {
         int puntuacio_final = 0;
@@ -165,6 +184,16 @@ public class Monomax2 implements Jugador, IAuto {
         return puntuacio_final;
     }
 
+    /**
+     * 
+     * @param tauler_copia
+     * @param color
+     * @param profunditat
+     * @param alpha
+     * @param beta
+     * @param esBendicion
+     * @return valor
+     */
     // True max, false min
     public int minimax(Tauler tauler_copia, int color, int profunditat, int alpha, int beta, boolean esBendicion) {
         int color_oponent = color;
@@ -240,6 +269,21 @@ public class Monomax2 implements Jugador, IAuto {
         return valor;
 
     }
+    
+    /**
+     * Función encargada de calcular las fichas conectadas ya sea del jugador como del oponente. 
+     * Para esta función se introducen los parámetros de aumento de filas y aumento de columnas 
+     * con los cuales se puede controlar si se está viendo las fichas conectadas en vertical, 
+     * horizontal o diagonales
+     * 
+     * @param tauler
+     * @param fila
+     * @param columna
+     * @param increment_fila
+     * @param increment_columna
+     * @param color
+     * @return bendiciones
+     */
 
     // Cuenta cuantas hay conectadas del jugador y del oponente
     public int bendiciones(Tauler tauler, int fila, int columna, int increment_fila, int increment_columna, int color) {
@@ -255,31 +299,49 @@ public class Monomax2 implements Jugador, IAuto {
         int bendiciones_oponente = 0;
         int bendiciones = 0;
 
+        // Busca las fichas conectadas del jugador y del oponente.
+        // para esto se necesitan los parametros de increment_fila e increment_columna,
+        // de esta forma se puede hacer este procedimiento en vertical, horizontal y en
+        // diagonal.
         for (int i = 0; i < 4; i++) {
+            // Si la ficha encontrada es del oponente, aumentamos su contador
             if (tauler.getColor(fila, columna) == color_oponent) {
                 bendiciones_oponente++;
             }
-
+            // Si la ficha encontrada es nuestra, aumentamos nuestro contador
             else if (tauler.getColor(fila, columna) == color) {
                 bendiciones++;
             }
+            // Dependiendo de los parametros introducidos aumentamos la fila, columna o ambos
+            // Básicamente con esto estamos haciendo un barrido de todo el tablero.
             fila += increment_fila;
             columna += increment_columna;
         }
-
+        
+        // Si las fichas del oponente que esten juntas suman 4 ha ganado
         if (bendiciones_oponente == 4) {
+            // Eso no es de Dios ve
             return PERDEDOR;
         }
-
+        
+        //Si las fichas nuestras conectadas suman 4 hemos ganado
         else if (bendiciones == 4) {
+            // Que bendicion ve
             return GANADOR;
         }
 
+        // Si no se cumple ninguno de los casos anteriores retornará 
+        // el número de fichas conectadas del jugador
         else {
             return bendiciones;
         }
     }
-
+    
+    /**
+     * Función que regresa el nombre de nuestro jugador.
+     * En este caso regresará MONOMAX
+     * @return nom
+     */
     public String nom() {
         return nom;
     }
