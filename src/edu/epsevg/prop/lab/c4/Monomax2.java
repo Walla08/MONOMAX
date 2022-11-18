@@ -6,7 +6,7 @@
 package edu.epsevg.prop.lab.c4;
 
 /**
- *
+ * Algoritmo MONOMAX
  * @author Walter y Miquel
  */
 public class Monomax2 implements Jugador, IAuto {
@@ -23,13 +23,21 @@ public class Monomax2 implements Jugador, IAuto {
     // infinito)
     private static final int PERDEDOR = -999999;
 
-    // Cantidad de veces que se calcula la heurisitca, se reincia cada ronda
+    /**
+     * Cantidad de veces que se calcula la heuristica, se reinicia cada ronda
+     */
     public int contador;
-
-    // Numero de rondas de la partida
+    
+    /**
+     * Número de rondas de la partida
+     */
     public int rondas;
 
     // Constructor
+    /**
+     * Metodo de creacion de MONOMAX.
+     * @param profundidad Profundidad que el algoritmo minimax evaluará
+     */
     public Monomax2(int profundidad) {
         this.nom = "MONOMAX";
         this.profundidad = profundidad;
@@ -38,13 +46,12 @@ public class Monomax2 implements Jugador, IAuto {
     }
     
     /**
-     * Es la función principal para el movimiento de una ficha. 
-     * Se encarga de iniciar la función minimax para poder evaluar 
-     * el mejor movimiento posible para cada columna del tablero.
+     * Es la función principal para el movimiento de una ficha. Se encarga de iniciar la función minimax para poder evaluar 
+     * el mejor movimiento posible para cada columna del tablero y retorna la mejor columna donde tirar.
      * 
-     * @param t
-     * @param color
-     * @return millormov
+     * @param t Tablero donde se juega.
+     * @param color Color del jugador.
+     * @return millormov [Número de columna donde es mejor tirar la ficha.]
 
      */
     public int moviment(Tauler t, int color) {
@@ -108,9 +115,9 @@ public class Monomax2 implements Jugador, IAuto {
      * Encargada de devolver el valor heurístico total que tiene cierto Tauler, 
      * donde “color” hace referencia al color de ficha de nuestro jugador (Monomax 🐒 ). 
      * Con este tablero y este color, podemos calcular cuál es el valor heurístico de la mesa.
-     * @param t
-     * @param color
-     * @return puntuacio_final
+     * @param t Tablero donde se juega.
+     * @param color Color del jugador.
+     * @return puntuacio_final [Puntuación de verticales, horizontales y diagonales despues de evaluar el movimiento de una ficha en esa posición.]
      */
 
     public int heuristica(Tauler t, int color) {
@@ -185,14 +192,18 @@ public class Monomax2 implements Jugador, IAuto {
     }
 
     /**
+     * Esta función es la encargada de escoger el mejor camino de las opciones exploradas. 
+     * Básicamente se encarga de verificar que tan efectivo es un movimiento en una columna,
+     * tanto como nosotros como para el rival. Si el camino seleccionado es bueno(depende de 
+     * la planificación de la heurística) nos llevará a ganar la partida.
      * 
-     * @param tauler_copia
-     * @param color
-     * @param profunditat
-     * @param alpha
-     * @param beta
-     * @param esBendicion
-     * @return valor
+     * @param tauler_copia Copia del Tablero donde se juega.
+     * @param color Color del jugador.
+     * @param profunditat Profundidad a evaluar el algoritmo(Iteraciones del minimax).
+     * @param alpha Número máximo a escoger por MAX.
+     * @param beta Número mínimo a escoger por min.
+     * @param esBendicion Parametro que indica si estamos en iteración de MAX o de min.
+     * @return valor [Valor de evaluación del minimax(luego de haber pasado por heuristica y bendiciones).]
      */
     // True max, false min
     public int minimax(Tauler tauler_copia, int color, int profunditat, int alpha, int beta, boolean esBendicion) {
@@ -276,13 +287,13 @@ public class Monomax2 implements Jugador, IAuto {
      * con los cuales se puede controlar si se está viendo las fichas conectadas en vertical, 
      * horizontal o diagonales
      * 
-     * @param tauler
-     * @param fila
-     * @param columna
-     * @param increment_fila
-     * @param increment_columna
-     * @param color
-     * @return bendiciones
+     * @param tauler Tablero donde se juega.
+     * @param fila Fila seleccionada.
+     * @param columna Columna seleccionada.
+     * @param increment_fila Incremento de fila con el cual se buscará en vertical, horizontal o diagonal.
+     * @param increment_columna Incremento de columna con el cual se buscará en vertical, horizontal o diagonal.
+     * @param color Color del jugador.
+     * @return bendiciones [Número de fichas conectadas(GANADOR, PERDEDOR o el número de conectadas del jugador).]
      */
 
     // Cuenta cuantas hay conectadas del jugador y del oponente
@@ -340,7 +351,7 @@ public class Monomax2 implements Jugador, IAuto {
     /**
      * Función que regresa el nombre de nuestro jugador.
      * En este caso regresará MONOMAX
-     * @return nom
+     * @return nom [Es el nombre del jugador]
      */
     public String nom() {
         return nom;
